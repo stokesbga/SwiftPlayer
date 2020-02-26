@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SwiftPlayer
 import ObjectMapper
 
 //MARK: - Protocol Adoption -
@@ -42,9 +41,9 @@ struct TrackModel {
 struct PlaylistJSONParse: Mappable {
   var data: [TrackJSONParse]?
   
-  init?(_ map: Map) {}
+  init?(map: Map) {}
   
-  mutating func mapping(_ map: Map) {
+  mutating func mapping(map: Map) {
     data <- map["tracks.data"]
   }
 }
@@ -60,9 +59,9 @@ struct TrackJSONParse: Mappable {
   var album: AlbumJSONParse!
   var artist: ArtistJSONParse!
   
-  init?(_ map: Map) {}
+  init?(map: Map) {}
   
-  mutating func mapping(_ map: Map) {
+  mutating func mapping(map: Map) {
     id        <- map["id"]
     readable  <- map["readable"]
     title     <- map["title"]
@@ -84,9 +83,9 @@ struct AlbumJSONParse: Mappable {
   var coverBig: String!
   var tracklist: String!
   
-  init?(_ map: Map) {}
+  init?(map: Map) {}
   
-  mutating func mapping(_ map: Map) {
+  mutating func mapping(map: Map) {
     id           <- map["id"]
     title        <- map["title"]
     cover        <- map["cover"]
@@ -103,9 +102,9 @@ struct ArtistJSONParse: Mappable {
   var link: String!
   var tracklist: String!
   
-  init?(_ map: Map) {}
+  init?(map: Map) {}
   
-  mutating func mapping(_ map: Map) {
+  mutating func mapping(map: Map) {
     id        <- map["id"]
     name      <- map["name"]
     link      <- map["link"]

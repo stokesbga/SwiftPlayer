@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftPlayer
 
 class QueueTableViewCell: UITableViewCell {
   
@@ -28,7 +27,7 @@ class QueueTableViewCell: UITableViewCell {
       }
       
       if let image = track?.image {
-        coverImage.af_setImageWithURL(URL(string: image)!)
+        coverImage.af_setImage(withURL: URL(string: image)! as URL)
       }
     }
   }

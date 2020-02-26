@@ -9,12 +9,7 @@
 import UIKit
 import Foundation
 import MediaPlayer
-import HysteriaPlayer
 
-
-import Foundation
-import MediaPlayer
-import HysteriaPlayer
 // FIXME: comparison operators with optionals were removed from the Swift Standard Libary.
 // Consider refactoring the code to use the non-optional operators.
 fileprivate func < <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
@@ -44,7 +39,7 @@ fileprivate func > <T : Comparable>(lhs: T?, rhs: T?) -> Bool {
 class HysteriaManager: NSObject {
 
   static let sharedInstance = HysteriaManager()
-  lazy var hysteriaPlayer = HysteriaPlayer.sharedInstance()
+  var hysteriaPlayer = HysteriaPlayer.sharedInstance()
 
   var logs = true
   var queue = PlayerQueue()
@@ -215,9 +210,11 @@ extension HysteriaManager {
   // Shuffle Methods
   func shuffleStatus() -> Bool {
     switch hysteriaPlayer?.getShuffleMode() {
-    case .on:
+    case let val where val == .on:
       return true
-    case .off:
+    case let val where val == .off:
+      return false
+    default:
       return false
     }
   }
@@ -233,11 +230,13 @@ extension HysteriaManager {
   // Repeat Methods
   func repeatStatus() -> (Bool, Bool, Bool) {
     switch hysteriaPlayer?.getRepeatMode() {
-    case .on:
+    case let val where val == .on:
       return (true, false, false)
-    case .once:
+    case let val where val == .once:
       return (false, true, false)
-    case .off:
+    case let val where val == .off:
+      return (false, false, true)
+    default:
       return (false, false, true)
     }
   }
@@ -256,7 +255,7 @@ extension HysteriaManager {
 
   func seekTo(_ slider: UISlider) {
     let duration = hysteriaPlayer?.getPlayingItemDurationTime()
-    if isfinite(duration!) {
+    if duration!.isFinite {
       let minValue = slider.minimumValue
       let maxValue = slider.maximumValue
       let value = slider.value

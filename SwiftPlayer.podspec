@@ -13,5 +13,6 @@ This CocoaPod provides the ability to use a stream player using swift language o
   s.platform     = :ios, '8.0'
   s.requires_arc = true
   s.source_files = 'Source/**/*'
+  s.swift_versions = "3"
   s.dependency 'HysteriaPlayer', '~> 2.1'
 end

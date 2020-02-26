@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftPlayer
 import AlamofireImage
 import AVFoundation
 
@@ -84,8 +83,8 @@ extension ViewController {
   }
   
   func updateAlbumCoverWithURL(_ url: String) {
-    coverAlbum.af_setImageWithURL(URL(string: url)!)
-    coverBackground.af_setImageWithURL(URL(string: url)!)
+    coverAlbum.af_setImage(withURL: (URL(string: url)! as URL))
+    coverBackground.af_setImage(withURL: (URL(string: url)! as URL))
   }
   
 }

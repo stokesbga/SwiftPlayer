@@ -7,7 +7,6 @@
 //
 
 import UIKit
-import SwiftPlayer
 import AlamofireImage
 
 // MARK: - Section Enum

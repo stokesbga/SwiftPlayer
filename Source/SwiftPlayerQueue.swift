@@ -125,18 +125,24 @@ struct PlayerQueue {
 
 
 extension Array {
-  func shift(withDistance distance: Index.Distance = 1) -> Array<Element> {
-    let index = distance >= 0 ?
-      startIndex.advancedBy(distance, limit: endIndex) :
-      endIndex.advancedBy(distance, limit: startIndex)
-    return Array(self[index ..< endIndex] + self[startIndex ..< index])
-  }
-  
-  mutating func shiftInPlace(withDistance distance: Index.Distance = 1) {
-    self = shift(withDistance: distance)
-  }
-  
-  mutating func moveItem(fromIndex oldIndex: Index, toIndex newIndex: Index) {
-    insert(remove(at: oldIndex), at: newIndex)
-  }
+
+    func shift(withDistance distance: Int = 1) -> Array<Element> {
+
+        guard self.count > 0, (distance % self.count) != 0 else { return self }
+        let moduloShiftAmount = distance % self.count
+        let negativeShift = distance < 0
+        let effectiveShiftAmount = negativeShift ? moduloShiftAmount + self.count : moduloShiftAmount
+        let shift: (Int) -> Int = { return $0 + effectiveShiftAmount >= self.count ? $0 + effectiveShiftAmount - self.count : $0 + effectiveShiftAmount }
+        return self.enumerated().sorted(by: { shift($0.offset) < shift($1.offset) }).map { $0.element }
+    }
+    
+    
+    mutating func shiftInPlace(withDistance distance: Int = 1) {
+        self = shift(withDistance: distance)
+    }
+    
+    mutating func moveItem(fromIndex oldIndex: Index, toIndex newIndex: Index) {
+        insert(remove(at: oldIndex), at: newIndex)
+    }
+
 }
