@@ -99,7 +99,7 @@
 			isa = PBXGroup;
 			children = (
 				607FACF51AFB993E008FA782 /* Podspec Metadata */,
-				607FACD21AFB9204008FA782 /* Example for SwiftPlayer */,
+				607FACD21AFB9204008FA782 /* Example */,
 				607FACD11AFB9204008FA782 /* Products */,
 				B10E26047EA31490D279E8F6 /* Pods */,
 				4246C9F81EF8D93B2908C58F /* Frameworks */,
@@ -117,7 +117,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		607FACD21AFB9204008FA782 /* Example for SwiftPlayer */ = {
+		607FACD21AFB9204008FA782 /* Example */ = {
 			isa = PBXGroup;
 			children = (
 				29C1EC6B240611B700566C2A /* HysteriaPlayer */,
@@ -133,7 +133,7 @@
 				29C1EC6C240611D600566C2A /* SwiftPlayer_Example-Bridging-Header.h */,
 				607FACD31AFB9204008FA782 /* Supporting Files */,
 			);
-			name = "Example for SwiftPlayer";
+			name = Example;
 			path = SwiftPlayer;
 			sourceTree = "<group>";
 		};

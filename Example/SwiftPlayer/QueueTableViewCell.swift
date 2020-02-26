@@ -27,7 +27,7 @@ class QueueTableViewCell: UITableViewCell {
       }
       
       if let image = track?.image {
-        coverImage.af_setImage(withURL: URL(string: image)! as URL)
+				coverImage.af.setImage(withURL: URL(string: image)! as URL)
       }
     }
   }
