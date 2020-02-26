@@ -41,7 +41,7 @@ class ViewController: UIViewController {
 //MARK: - Adjust initial UI
 extension ViewController {
   func prepareUI() {
-    skub.setThumbImage(UIImage(named: "skubidu")!, for: UIControlState())
+    skub.setThumbImage(UIImage(named: "skubidu")!, for: UIControl.State())
     buttonShuffle.isSelected = SwiftPlayer.isShuffle() ? true : false
     buttonShuffle.alpha = SwiftPlayer.isShuffle() ? 1.0 : 0.33
   }

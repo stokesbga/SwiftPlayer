@@ -71,7 +71,7 @@ class HysteriaManager: NSObject {
 // MARK: - HysteriaManager - UI
 extension HysteriaManager {
   fileprivate func currentTime() {
-    hysteriaPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(100, 1000), queue: nil, using: {
+    hysteriaPlayer?.addPeriodicTimeObserver(forInterval: CMTimeMake(value: 100, timescale: 1000), queue: nil, using: {
       time in
       let totalSeconds = CMTimeGetSeconds(time)
       self.delegate?.playerCurrentTimeChanged(Float(totalSeconds))

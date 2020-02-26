@@ -122,7 +122,7 @@ class QueueTableViewController: UITableViewController {
   
   override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
     let header = view as! UITableViewHeaderFooterView
-    header.textLabel?.font = UIFont.systemFont(ofSize: 12, weight: UIFontWeightRegular)
+    header.textLabel?.font = UIFont.systemFont(ofSize: 12, weight: UIFont.Weight.regular)
     view.tintColor = UIColor.lightGray.withAlphaComponent(0.7)
   }
   
