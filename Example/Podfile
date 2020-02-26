@@ -1,9 +1,5 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '10.0'
-DEFAULT_SWIFT_VERSION = '3'
-POD_SWIFT_VERSION_MAP = {
-  'HysteriaPlayer' => '2'
-}
 
 target 'SwiftPlayer_Example' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -11,26 +7,13 @@ target 'SwiftPlayer_Example' do
 
   # Pods for SwiftPlayer_Example
   # pod "SwiftPlayer", :path => '../'
-  pod "ObjectMapper", "~> 3.3.0"
-  pod "Alamofire", "~> 4.0.0"
-  pod "AlamofireImage", "~> 3.0.0"
+  pod "ObjectMapper", "~> 3.5.0"
+  pod "AlamofireImage", "~> 4.0.0"
 
   # target 'SwiftPlayer_Tests' do 
   #   # Pods for Tests
   #   inherit! :search_paths
   # end
 
-end
-
-
-
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    swift_version = POD_SWIFT_VERSION_MAP[target.name] || DEFAULT_SWIFT_VERSION
-    puts "Setting #{target.name} Swift version to #{swift_version}"
-    target.build_configurations.each do |config|
-      config.build_settings['SWIFT_VERSION'] = swift_version
-    end
-  end
 end
 

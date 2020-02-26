@@ -1,13 +1,12 @@
 PODS:
-  - Alamofire (4.0.1)
-  - AlamofireImage (3.0.0):
-    - Alamofire (~> 4.0)
-  - ObjectMapper (3.3.0)
+  - Alamofire (5.0.2)
+  - AlamofireImage (4.0.1):
+    - Alamofire (< 6.0.0, >= 5.0.2)
+  - ObjectMapper (3.5.1)
 
 DEPENDENCIES:
-  - Alamofire (~> 4.0.0)
-  - AlamofireImage (~> 3.0.0)
-  - ObjectMapper (~> 3.3.0)
+  - AlamofireImage (~> 4.0.0)
+  - ObjectMapper (~> 3.5.0)
 
 SPEC REPOS:
   trunk:
@@ -16,10 +15,10 @@ SPEC REPOS:
     - ObjectMapper
 
 SPEC CHECKSUMS:
-  Alamofire: 7682d43245de14874acd142ec137b144aa1dd335
-  AlamofireImage: 6594aa1139a67dcd36cde6da79ea4e5b318e60fb
-  ObjectMapper: b612bf8c8e99c4dc0bb6013a51f7c27966ed5da9
+  Alamofire: 3ba7a4db18b4f62c4a1c0e1cb39d7f3d52e10ada
+  AlamofireImage: a8a5289046ac46b4d0183bcf73ce12ce30564cb7
+  ObjectMapper: 70187b8941977c62ccfb423caf6b50be405cabf0
 
-PODFILE CHECKSUM: 521c2b280b1bfcdf26954afd56ee69c19cd69f34
+PODFILE CHECKSUM: bd491b1d232e0f17f5e1770e11356a7b6021b6cf
 
 COCOAPODS: 1.8.4

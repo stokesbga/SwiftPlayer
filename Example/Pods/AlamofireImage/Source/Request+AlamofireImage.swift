@@ -1,7 +1,7 @@
 //
 //  Request+AlamofireImage.swift
 //
-//  Copyright (c) 2015-2016 Alamofire Software Foundation (http://alamofire.org/)
+//  Copyright (c) 2015 Alamofire Software Foundation (http://alamofire.org/)
 //
 //  Permission is hereby granted, free of charge, to any person obtaining a copy
 //  of this software and associated documentation files (the "Software"), to deal
@@ -30,74 +30,137 @@ import UIKit
 #elseif os(watchOS)
 import UIKit
 import WatchKit
-#elseif os(OSX)
+#elseif os(macOS)
 import Cocoa
 #endif
 
-extension DataRequest {
-    static var acceptableImageContentTypes: Set<String> = [
-        "image/tiff",
-        "image/jpeg",
-        "image/gif",
-        "image/png",
-        "image/ico",
-        "image/x-icon",
-        "image/bmp",
-        "image/x-bmp",
-        "image/x-xbitmap",
-        "image/x-ms-bmp",
-        "image/x-win-bitmap"
-    ]
+public final class ImageResponseSerializer: ResponseSerializer {
+    // MARK: Properties
+
+    public static var deviceScreenScale: CGFloat { return DataRequest.imageScale }
+
+    public let imageScale: CGFloat
+    public let inflateResponseImage: Bool
+    public let emptyResponseCodes: Set<Int>
+    public let emptyRequestMethods: Set<HTTPMethod>
+
+    static var acceptableImageContentTypes: Set<String> = ["application/octet-stream",
+                                                           "image/tiff",
+                                                           "image/jpeg",
+                                                           "image/gif",
+                                                           "image/png",
+                                                           "image/ico",
+                                                           "image/x-icon",
+                                                           "image/bmp",
+                                                           "image/x-bmp",
+                                                           "image/x-xbitmap",
+                                                           "image/x-ms-bmp",
+                                                           "image/x-win-bitmap"]
+
+    static let streamImageInitialBytePattern = Data([255, 216]) // 0xffd8
+
+    // MARK: Initialization
+
+    public init(imageScale: CGFloat = ImageResponseSerializer.deviceScreenScale,
+                inflateResponseImage: Bool = true,
+                emptyResponseCodes: Set<Int> = ImageResponseSerializer.defaultEmptyResponseCodes,
+                emptyRequestMethods: Set<HTTPMethod> = ImageResponseSerializer.defaultEmptyRequestMethods) {
+        self.imageScale = imageScale
+        self.inflateResponseImage = inflateResponseImage
+        self.emptyResponseCodes = emptyResponseCodes
+        self.emptyRequestMethods = emptyRequestMethods
+    }
+
+    // MARK: Serialization
+
+    public func serialize(request: URLRequest?, response: HTTPURLResponse?, data: Data?, error: Error?) throws -> Image {
+        guard error == nil else { throw error! }
+
+        guard let data = data, !data.isEmpty else {
+            guard emptyResponseAllowed(forRequest: request, response: response) else {
+                throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
+            }
+
+            print("Returning empty image!")
+            return Image()
+        }
+
+        try validateContentType(for: request, response: response)
+        let image = try serializeImage(from: data)
+
+        return image
+    }
+
+    public func serializeImage(from data: Data) throws -> Image {
+        guard !data.isEmpty else {
+            throw AFError.responseSerializationFailed(reason: .inputDataNilOrZeroLength)
+        }
+
+        #if os(iOS) || os(tvOS) || os(watchOS)
+        guard let image = UIImage.af.threadSafeImage(with: data, scale: imageScale) else {
+            throw AFIError.imageSerializationFailed
+        }
+
+        if inflateResponseImage { image.af.inflate() }
+        #elseif os(macOS)
+        guard let bitmapImage = NSBitmapImageRep(data: data) else {
+            throw AFIError.imageSerializationFailed
+        }
+
+        let image = NSImage(size: NSSize(width: bitmapImage.pixelsWide, height: bitmapImage.pixelsHigh))
+        image.addRepresentation(bitmapImage)
+        #endif
+
+        return image
+    }
+
+    // MARK: Content Type Validation
 
     /// Adds the content types specified to the list of acceptable images content types for validation.
     ///
     /// - parameter contentTypes: The additional content types.
     public class func addAcceptableImageContentTypes(_ contentTypes: Set<String>) {
-        DataRequest.acceptableImageContentTypes.formUnion(contentTypes)
+        ImageResponseSerializer.acceptableImageContentTypes.formUnion(contentTypes)
     }
 
-    // MARK: - iOS, tvOS and watchOS
+    public func validateContentType(for request: URLRequest?, response: HTTPURLResponse?) throws {
+        if let url = request?.url, url.isFileURL { return }
+
+        guard let mimeType = response?.mimeType else {
+            let contentTypes = Array(ImageResponseSerializer.acceptableImageContentTypes)
+            throw AFError.responseValidationFailed(reason: .missingContentType(acceptableContentTypes: contentTypes))
+        }
+
+        guard ImageResponseSerializer.acceptableImageContentTypes.contains(mimeType) else {
+            let contentTypes = Array(ImageResponseSerializer.acceptableImageContentTypes)
+
+            throw AFError.responseValidationFailed(
+                reason: .unacceptableContentType(acceptableContentTypes: contentTypes, responseContentType: mimeType)
+            )
+        }
+    }
+}
+
+// MARK: - Image Scale
+
+extension DataRequest {
+    public class var imageScale: CGFloat {
+        #if os(iOS) || os(tvOS)
+        return UIScreen.main.scale
+        #elseif os(watchOS)
+        return WKInterfaceDevice.current().screenScale
+        #elseif os(macOS)
+        return 1.0
+        #endif
+    }
+}
+
+// MARK: - iOS, tvOS, and watchOS
 
 #if os(iOS) || os(tvOS) || os(watchOS)
 
-    /// Creates a response serializer that returns an image initialized from the response data using the specified
-    /// image options.
-    ///
-    /// - parameter imageScale:           The scale factor used when interpreting the image data to construct
-    ///                                   `responseImage`. Specifying a scale factor of 1.0 results in an image whose
-    ///                                   size matches the pixel-based dimensions of the image. Applying a different
-    ///                                   scale factor changes the size of the image as reported by the size property.
-    ///                                   `Screen.scale` by default.
-    /// - parameter inflateResponseImage: Whether to automatically inflate response image data for compressed formats
-    ///                                   (such as PNG or JPEG). Enabling this can significantly improve drawing
-    ///                                   performance as it allows a bitmap representation to be constructed in the
-    ///                                   background rather than on the main thread. `true` by default.
-    ///
-    /// - returns: An image response serializer.
-    public class func imageResponseSerializer(
-        imageScale: CGFloat = DataRequest.imageScale,
-        inflateResponseImage: Bool = true)
-        -> DataResponseSerializer<Image>
-    {
-        return DataResponseSerializer { request, response, data, error in
-            let result = serializeResponseData(response: response, data: data, error: error)
-
-            guard case let .success(data) = result else { return .failure(result.error!) }
-
-            do {
-                try DataRequest.validateContentType(for: request, response: response)
-
-                let image = try DataRequest.image(from: data, withImageScale: imageScale)
-                if inflateResponseImage { image.af_inflate() }
-
-                return .success(image)
-            } catch {
-                return .failure(error)
-            }
-        }
-    }
-
-    /// Adds a handler to be called once the request has finished.
+extension DataRequest {
+    /// Adds a response handler to be called once the request has finished.
     ///
     /// - parameter imageScale:           The scale factor used when interpreting the image data to construct
     ///                                   `responseImage`. Specifying a scale factor of 1.0 results in an image whose
@@ -110,6 +173,7 @@ extension DataRequest {
     ///                                   (such as PNG or JPEG). Enabling this can significantly improve drawing
     ///                                   performance as it allows a bitmap representation to be constructed in the
     ///                                   background rather than on the main thread. `true` by default.
+    /// - parameter queue:                The queue on which the completion handler is dispatched. `.main` by default.
     /// - parameter completionHandler:    A closure to be executed once the request has finished. The closure takes 4
     ///                                   arguments: the URL request, the URL response, if one was received, the image,
     ///                                   if one could be created from the URL response and data, and any error produced
@@ -117,101 +181,40 @@ extension DataRequest {
     ///
     /// - returns: The request.
     @discardableResult
-    public func responseImage(
-        imageScale: CGFloat = DataRequest.imageScale,
-        inflateResponseImage: Bool = true,
-        completionHandler: @escaping (DataResponse<Image>) -> Void)
-        -> Self
-    {
-        return response(
-            responseSerializer: DataRequest.imageResponseSerializer(
-                imageScale: imageScale,
-                inflateResponseImage: inflateResponseImage
-            ),
-            completionHandler: completionHandler
-        )
+    public func responseImage(imageScale: CGFloat = DataRequest.imageScale,
+                              inflateResponseImage: Bool = true,
+                              queue: DispatchQueue = .main,
+                              completionHandler: @escaping (AFDataResponse<Image>) -> Void)
+        -> Self {
+        return response(queue: queue,
+                        responseSerializer: ImageResponseSerializer(imageScale: imageScale,
+                                                                    inflateResponseImage: inflateResponseImage),
+                        completionHandler: completionHandler)
     }
+}
 
-    private class func image(from data: Data, withImageScale imageScale: CGFloat) throws -> UIImage {
-        if let image = UIImage.af_threadSafeImage(with: data, scale: imageScale) {
-            return image
-        }
+// MARK: - macOS
 
-        throw AFIError.imageSerializationFailed
-    }
+#elseif os(macOS)
 
-    private class var imageScale: CGFloat {
-        #if os(iOS) || os(tvOS)
-            return UIScreen.main.scale
-        #elseif os(watchOS)
-            return WKInterfaceDevice.current().screenScale
-        #endif
-    }
-
-#elseif os(OSX)
-
-    // MARK: - OSX
-
-    /// Creates a response serializer that returns an image initialized from the response data.
+extension DataRequest {
+    /// Adds a response handler to be called once the request has finished.
     ///
-    /// - returns: An image response serializer.
-    public class func imageResponseSerializer() -> DataResponseSerializer<Image> {
-        return DataResponseSerializer { request, response, data, error in
-            let result = serializeResponseData(response: response, data: data, error: error)
-
-            guard case let .success(data) = result else { return .failure(result.error!) }
-
-            do {
-                try DataRequest.validateContentType(for: request, response: response)
-            } catch {
-                return .failure(error)
-            }
-
-            guard let bitmapImage = NSBitmapImageRep(data: data) else {
-                return .failure(AFIError.imageSerializationFailed)
-            }
-
-            let image = NSImage(size: NSSize(width: bitmapImage.pixelsWide, height: bitmapImage.pixelsHigh))
-            image.addRepresentation(bitmapImage)
-
-            return .success(image)
-        }
-    }
-
-    /// Adds a handler to be called once the request has finished.
-    ///
-    /// - parameter completionHandler: A closure to be executed once the request has finished. The closure takes 4
-    ///                                arguments: the URL request, the URL response, if one was received, the image, if
-    ///                                one could be created from the URL response and data, and any error produced while
-    ///                                creating the image.
+    /// - Parameters:
+    ///   - queue:             The queue on which the completion handler is dispatched. `.main` by default.
+    ///   - completionHandler: A closure to be executed once the request has finished. The closure takes 4 arguments:
+    ///                        the URL request, the URL response, if one was received, the image, if one could be
+    ///                        created from the URL response and data, and any error produced while creating the image.
     ///
     /// - returns: The request.
     @discardableResult
-    public func responseImage(completionHandler: @escaping (DataResponse<Image>) -> Void) -> Self {
-        return response(
-            responseSerializer: DataRequest.imageResponseSerializer(),
-            completionHandler: completionHandler
-        )
-    }
-
-#endif
-
-    // MARK: - Private - Shared Helper Methods
-
-    private class func validateContentType(for request: URLRequest?, response: HTTPURLResponse?) throws {
-        if let url = request?.url, url.isFileURL { return }
-
-        guard let mimeType = response?.mimeType else {
-            let contentTypes = Array(DataRequest.acceptableImageContentTypes)
-            throw AFError.responseValidationFailed(reason: .missingContentType(acceptableContentTypes: contentTypes))
-        }
-
-        guard DataRequest.acceptableImageContentTypes.contains(mimeType) else {
-            let contentTypes = Array(DataRequest.acceptableImageContentTypes)
-
-            throw AFError.responseValidationFailed(
-                reason: .unacceptableContentType(acceptableContentTypes: contentTypes, responseContentType: mimeType)
-            )
-        }
+    public func responseImage(queue: DispatchQueue = .main,
+                              completionHandler: @escaping (AFDataResponse<Image>) -> Void)
+        -> Self {
+        return response(queue: queue,
+                        responseSerializer: ImageResponseSerializer(inflateResponseImage: false),
+                        completionHandler: completionHandler)
     }
 }
+
+#endif

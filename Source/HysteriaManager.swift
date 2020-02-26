@@ -127,7 +127,7 @@ extension HysteriaManager {
 
   fileprivate func imageFromString(_ imagePath: String) -> UIImage? {
     let detectorr = try! NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
-    let matches = detectorr.matches(in: imagePath, options: [], range: NSMakeRange(0, imagePath.characters.count))
+    let matches = detectorr.matches(in: imagePath, options: [], range: NSMakeRange(0, imagePath.count))
 
     for match in matches {
       let url = (imagePath as NSString).substring(with: match.range)
