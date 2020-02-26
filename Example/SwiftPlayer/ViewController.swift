@@ -83,8 +83,8 @@ extension ViewController {
   }
   
   func updateAlbumCoverWithURL(_ url: String) {
-    coverAlbum.af_setImage(withURL: (URL(string: url)! as URL))
-    coverBackground.af_setImage(withURL: (URL(string: url)! as URL))
+		coverAlbum.af.setImage(withURL: (URL(string: url)! as URL))
+		coverBackground.af.setImage(withURL: (URL(string: url)! as URL))
   }
   
 }
@@ -125,8 +125,9 @@ extension ViewController {
   @IBAction func unwindToPlayer(_ segue: UIStoryboardSegue) {}
   
   @IBAction func addNext() {
-    let randomIndex = Int(arc4random_uniform(UInt32(playlist.count)))
-    SwiftPlayer.addNextTrack(playlist[randomIndex])
+		// Commented out because player not always shuffled. Was adding to random index, not next
+//    let randomIndex = Int(arc4random_uniform(UInt32(playlist.count)))
+//    SwiftPlayer.addNextTrack(playlist[randomIndex])
   }
 }
 
