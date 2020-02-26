@@ -31,16 +31,6 @@
 		F1C956A23EFBC24CFE45DF38 /* Pods_SwiftPlayer_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 60F1C7F88E34B14ADE38E944 /* Pods_SwiftPlayer_Example.framework */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		607FACE61AFB9204008FA782 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
-			remoteInfo = SwiftPlayer;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		0710DA44210B4EB93A7045DF /* Pods-SwiftPlayer_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftPlayer_Example.release.xcconfig"; path = "Target Support Files/Pods-SwiftPlayer_Example/Pods-SwiftPlayer_Example.release.xcconfig"; sourceTree = "<group>"; };
 		1A74B476924676B023AC3A94 /* Pods-SwiftPlayer_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SwiftPlayer_Tests.debug.xcconfig"; path = "Target Support Files/Pods-SwiftPlayer_Tests/Pods-SwiftPlayer_Tests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -245,7 +235,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				607FACE71AFB9204008FA782 /* PBXTargetDependency */,
 			);
 			name = SwiftPlayer_Tests;
 			productName = Tests;
@@ -411,14 +400,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		607FACE71AFB9204008FA782 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 607FACCF1AFB9204008FA782 /* SwiftPlayer_Example */;
-			targetProxy = 607FACE61AFB9204008FA782 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		607FACD91AFB9204008FA782 /* Main.storyboard */ = {
