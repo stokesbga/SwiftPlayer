@@ -18,11 +18,11 @@ struct TrackModel {
     
     do {
       let object = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
-      if let dictionary = object as? [String: AnyObject] {
-        guard let playlist = Mapper<PlaylistJSONParse>().map(dictionary)
+      if let dictionary = object as? Dictionary<String, AnyObject> {
+        guard let playlist = Mapper<PlaylistJSONParse>().map(JSON: dictionary)
           else { return tracks }
         
-        for (index, item) in playlist.data!.enumerate() {
+        for (index, item) in playlist.data!.enumerated() {
           if size < index { continue }
           let track = PlayerTrack(url: item.preview, name: item.title, image: item.album.coverBig, album: item.album.title, artist: item.artist.name)
           tracks.append(track)
