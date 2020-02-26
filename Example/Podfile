@@ -11,14 +11,14 @@ target 'SwiftPlayer_Example' do
 
   # Pods for SwiftPlayer_Example
   # pod "SwiftPlayer", :path => '../'
-  pod "ObjectMapper", "~> 2.0.0"
+  pod "ObjectMapper", "~> 3.3.0"
   pod "Alamofire", "~> 4.0.0"
   pod "AlamofireImage", "~> 3.0.0"
 
-  target 'SwiftPlayer_Tests' do 
-    # Pods for Tests
-    inherit! :search_paths
-  end
+  # target 'SwiftPlayer_Tests' do 
+  #   # Pods for Tests
+  #   inherit! :search_paths
+  # end
 
 end
 
