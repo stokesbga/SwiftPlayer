@@ -23,7 +23,7 @@ class ViewController: UIViewController {
   @IBOutlet var coverAlbum: UIImageView!
   @IBOutlet var coverBackground: UIImageView!
   
-  private let logs = false
+  fileprivate let logs = false
   
   let playlist = TrackModel.localSampleData()
   
@@ -42,8 +42,8 @@ class ViewController: UIViewController {
 //MARK: - Adjust initial UI
 extension ViewController {
   func prepareUI() {
-    skub.setThumbImage(UIImage(named: "skubidu")!, forState: .Normal)
-    buttonShuffle.selected = SwiftPlayer.isShuffle() ? true : false
+    skub.setThumbImage(UIImage(named: "skubidu")!, for: UIControlState())
+    buttonShuffle.isSelected = SwiftPlayer.isShuffle() ? true : false
     buttonShuffle.alpha = SwiftPlayer.isShuffle() ? 1.0 : 0.33
   }
 }
@@ -51,25 +51,25 @@ extension ViewController {
 
 //MARK: - Sync UI
 extension ViewController {
-  func syncSkubyWithTime(time: Float) {
+  func syncSkubyWithTime(_ time: Float) {
     let minValue = skub.minimumValue
     let maxValue = skub.maximumValue
     skub.setValue(((maxValue - minValue) * time / SwiftPlayer.trackDurationTime() + minValue), animated: true)
   }
   
-  func syncDurationTime(time: Float) {
+  func syncDurationTime(_ time: Float) {
     labelDuration.text = time.toTimerString()
   }
   
-  func syncCurrentTime(time: Float) {
+  func syncCurrentTime(_ time: Float) {
     labelCurrent.text = time.toTimerString()
   }
   
-  func syncPlayButton(isPlaying: Bool) {
-    buttonPlay.selected = isPlaying ? true : false
+  func syncPlayButton(_ isPlaying: Bool) {
+    buttonPlay.isSelected = isPlaying ? true : false
   }
   
-  func syncLabelsInfoWithTrack(track: PlayerTrack) {
+  func syncLabelsInfoWithTrack(_ track: PlayerTrack) {
     if let name = track.name {
       labelTrack.text = name
     }
@@ -83,9 +83,9 @@ extension ViewController {
     }
   }
   
-  func updateAlbumCoverWithURL(url: String) {
-    coverAlbum.af_setImageWithURL(NSURL(string: url)!)
-    coverBackground.af_setImageWithURL(NSURL(string: url)!)
+  func updateAlbumCoverWithURL(_ url: String) {
+    coverAlbum.af_setImageWithURL(URL(string: url)!)
+    coverBackground.af_setImageWithURL(URL(string: url)!)
   }
   
 }
@@ -97,7 +97,7 @@ extension ViewController {
     SwiftPlayer.isPlaying() ? SwiftPlayer.pause() : SwiftPlayer.play()
   }
   
-  @IBAction func seekSkuby(sender: UISlider) {
+  @IBAction func seekSkuby(_ sender: UISlider) {
     SwiftPlayer.seekToWithSlider(sender)
   }
   
@@ -119,11 +119,11 @@ extension ViewController {
   
   @IBAction func shuffle() {
     SwiftPlayer.isShuffle() ? SwiftPlayer.disableShuffle() : SwiftPlayer.enableShufle()
-    buttonShuffle.selected = SwiftPlayer.isShuffle() ? true : false
+    buttonShuffle.isSelected = SwiftPlayer.isShuffle() ? true : false
     buttonShuffle.alpha = SwiftPlayer.isShuffle() ? 1.0 : 0.33
   }
   
-  @IBAction func unwindToPlayer(segue: UIStoryboardSegue) {}
+  @IBAction func unwindToPlayer(_ segue: UIStoryboardSegue) {}
   
   @IBAction func addNext() {
     let randomIndex = Int(arc4random_uniform(UInt32(playlist.count)))
@@ -133,7 +133,7 @@ extension ViewController {
 
 extension ViewController: SwiftPlayerDelegate {
   // Update View Info with track
-  func playerCurrentTrackChanged(track: PlayerTrack?) {
+  func playerCurrentTrackChanged(_ track: PlayerTrack?) {
     guard let track = track else { return }
     if logs {print("••• 📻 New Track 📻")}
     if logs {print("    Song - \(track.name)")}
@@ -146,20 +146,20 @@ extension ViewController: SwiftPlayerDelegate {
   }
   
   // Update button play
-  func playerRateChanged(isPlaying: Bool) {
+  func playerRateChanged(_ isPlaying: Bool) {
     let status = isPlaying ? "⏸" : "▶️"
     if logs {print("••• \(status) Status Button \(status)")}
     syncPlayButton(isPlaying)
   }
   
   // Update duration time
-  func playerDurationTime(time: Float) {
+  func playerDurationTime(_ time: Float) {
     if logs {print("••• ⌛️ \(time.toTimerString())")}
     syncDurationTime(time)
   }
   
   // Update current time
-  func playerCurrentTimeChanged(time: Float) {
+  func playerCurrentTimeChanged(_ time: Float) {
     if logs {print("••• ⏱ \(time.toTimerString())")}
     syncSkubyWithTime(time)
     syncCurrentTime(time)
@@ -172,15 +172,15 @@ extension Float {
   /// Convert float seconds to string formatted timer
   func toTimerString() -> String {
     let minute = Int(self / 60)
-    let second = Int(self % 60)
+    let second = Int(self.truncatingRemainder(dividingBy: 60))
     return String(format: "%01d:%02d", minute, second)
   }
 }
 
 
 class Skuby: UISlider {
-  override func trackRectForBounds(bounds: CGRect) -> CGRect {
-    var result = super.trackRectForBounds(bounds)
+  override func trackRect(forBounds bounds: CGRect) -> CGRect {
+    var result = super.trackRect(forBounds: bounds)
     result.origin.x = -1
     result.size.height = 3
     result.size.width = bounds.size.width + 2

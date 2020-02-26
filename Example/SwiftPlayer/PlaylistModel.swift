@@ -14,11 +14,11 @@ import ObjectMapper
 struct TrackModel {
   static func localSampleData(withSize size: Int = 15) -> [PlayerTrack] {
     var tracks = [PlayerTrack]()
-    let url = NSBundle.mainBundle().URLForResource("hiphop_playlist_full", withExtension: "json")
-    let data = NSData(contentsOfURL: url!)
+    let url = Bundle.main.url(forResource: "hiphop_playlist_full", withExtension: "json")
+    let data = try? Data(contentsOf: url!)
     
     do {
-      let object = try NSJSONSerialization.JSONObjectWithData(data!, options: .AllowFragments)
+      let object = try JSONSerialization.jsonObject(with: data!, options: .allowFragments)
       if let dictionary = object as? [String: AnyObject] {
         guard let playlist = Mapper<PlaylistJSONParse>().map(dictionary)
           else { return tracks }
@@ -44,7 +44,7 @@ struct PlaylistJSONParse: Mappable {
   
   init?(_ map: Map) {}
   
-  mutating func mapping(map: Map) {
+  mutating func mapping(_ map: Map) {
     data <- map["tracks.data"]
   }
 }
@@ -62,7 +62,7 @@ struct TrackJSONParse: Mappable {
   
   init?(_ map: Map) {}
   
-  mutating func mapping(map: Map) {
+  mutating func mapping(_ map: Map) {
     id        <- map["id"]
     readable  <- map["readable"]
     title     <- map["title"]
@@ -86,7 +86,7 @@ struct AlbumJSONParse: Mappable {
   
   init?(_ map: Map) {}
   
-  mutating func mapping(map: Map) {
+  mutating func mapping(_ map: Map) {
     id           <- map["id"]
     title        <- map["title"]
     cover        <- map["cover"]
@@ -105,7 +105,7 @@ struct ArtistJSONParse: Mappable {
   
   init?(_ map: Map) {}
   
-  mutating func mapping(map: Map) {
+  mutating func mapping(_ map: Map) {
     id        <- map["id"]
     name      <- map["name"]
     link      <- map["link"]
