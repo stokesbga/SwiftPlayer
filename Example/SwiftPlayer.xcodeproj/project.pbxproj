@@ -104,7 +104,10 @@
 				B10E26047EA31490D279E8F6 /* Pods */,
 				4246C9F81EF8D93B2908C58F /* Frameworks */,
 			);
+			indentWidth = 2;
 			sourceTree = "<group>";
+			tabWidth = 2;
+			usesTabs = 1;
 		};
 		607FACD11AFB9204008FA782 /* Products */ = {
 			isa = PBXGroup;

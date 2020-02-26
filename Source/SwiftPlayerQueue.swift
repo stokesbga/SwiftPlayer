@@ -127,7 +127,6 @@ struct PlayerQueue {
 extension Array {
 
     func shift(withDistance distance: Int = 1) -> Array<Element> {
-
         guard self.count > 0, (distance % self.count) != 0 else { return self }
         let moduloShiftAmount = distance % self.count
         let negativeShift = distance < 0
@@ -135,7 +134,6 @@ extension Array {
         let shift: (Int) -> Int = { return $0 + effectiveShiftAmount >= self.count ? $0 + effectiveShiftAmount - self.count : $0 + effectiveShiftAmount }
         return self.enumerated().sorted(by: { shift($0.offset) < shift($1.offset) }).map { $0.element }
     }
-    
     
     mutating func shiftInPlace(withDistance distance: Int = 1) {
         self = shift(withDistance: distance)
