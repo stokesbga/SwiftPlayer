@@ -8,7 +8,9 @@ This CocoaPod provides the ability to use a stream player using swift. Built on 
 
   s.homepage         = 'https://github.com/iTSangarDEV/SwiftPlayer'
   s.license          = 'MIT'
-  s.author           = { 'Alex Yosef' => 'alex@quadio.com' }
+  s.authors          = { 'Stan Tsai' => 'feocms@gmail.com',
+                         'iTSangar' => 'itsangardev@gmail.com',
+                         'Alex Yosef' => 'alex@quadio.com' }
   s.source           = { :git => 'https://github.com/stokesbga/SwiftPlayer.git', :tag => s.version.to_s }
   s.platform     = :ios, '10.0'
   s.requires_arc = true
